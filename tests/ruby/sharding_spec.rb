@@ -109,7 +109,7 @@ describe "Sharding" do
 
         it "routes queries with parameters and a shard_id comment to the correct shard" do
           conn = PG.connect(processes.pgcat.connection_string("sharded_db", "sharding_user"))
-          25.times { conn.exec_params("#{comment_to_use} SELECT 1 + $1", [2]) }
+          25.times { conn.exec_params("#{comment_to_use} SELECT $1 + $2", [1, 2]) }
 
           expect(processes.all_databases.map(&:count_select_1_plus_2)).to eq([0, 25, 0])
         end
