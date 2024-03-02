@@ -107,6 +107,14 @@ describe "Sharding" do
           expect(processes.all_databases.map(&:count_select_1_plus_2)).to eq([0, 25, 0])
         end
 
+        it "routes queries with parameters and a shard_id comment to the correct shard" do
+          conn = PG.connect(processes.pgcat.connection_string("sharded_db", "sharding_user"))
+          25.times { conn.exec_params("#{comment_to_use} SELECT 1 + $1", [2]) }
+
+          expect(processes.all_databases.map(&:count_select_1_plus_2)).to eq([0, 25, 0])
+        end
+
+
         context "when no_shard_specified_behavior config is set to random" do
           let(:no_shard_specified_behavior) { "random" }
 
