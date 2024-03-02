@@ -111,7 +111,7 @@ describe "Sharding" do
           conn = PG.connect(processes.pgcat.connection_string("sharded_db", "sharding_user"))
           25.times { conn.exec_params("#{comment_to_use} SELECT CAST($1 AS INTEGER) + CAST($2 AS INTEGER)", [1, 2]) }
 
-          expect(processes.all_databases.map(&:count_select_1_plus_2)).to eq([0, 25, 0])
+          expect(processes.all_databases.map(&:count_select_1_plus_2_parameterized)).to eq([0, 25, 0])
         end
 
 
